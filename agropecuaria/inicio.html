@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INKA - INICIO</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li class="active"><a href="inicio.html">Inicio</a></li>
+            <li><a href="productos.html">Productos</a></li>
+            <li><a href="ventas.html">Ventas</a></li>
+            <li><a href="iniciosesion.html">Inicio de Sesión</a></li>
+        </ul>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="contenedor-inicio">
+        <h1>Bienvenido a INKA Agropecuaria</h1>
+        <p class="subtitulo">Productos frescos y de calidad directamente a tu mesa</p>
+        
+        <div class="barra-busqueda">
+            <input 
+                type="text" 
+                id="input-busqueda" 
+                placeholder="Buscar por producto o productor..."
+                oninput="filtrarProductos()"  
+            >
+            <select id="filtro-categoria" onchange="filtrarProductos()">
+                <option value="">Todas las categorías</option>
+                <option value="frutas">Frutas</option>
+                <option value="verduras">Verduras</option>
+                <option value="carnes">Carnes</option>
+                <option value="lacteos">Lácteos</option>
+            </select>
+        </div>
+
+        <div class="categorias">
+            <!-- Categoría Frutas -->
+            <div class="categoria-card" onclick="mostrarProductos('frutas')" data-categoria="frutas">
+                <img src="img/frutas.jpeg" alt="Frutas frescas" class="categoria-img">
+                <h2>Frutas</h2>
+                <div class="productos" id="frutas">
+                    <div class="producto" data-productor="Granja Don José">Manzanas</div>
+                    <div class="producto" data-productor="Finca El Trópico">Plátanos</div>
+                    <div class="producto" data-productor="Citrícola Valparaíso">Naranjas</div>
+                    <div class="producto" data-productor="Berry Farms">Fresas</div>
+                    <div class="producto" data-productor="Viñedos Santa Elena">Uvas</div>
+                </div>
+            </div>
+            
+            <!-- Categoría Verduras -->
+            <div class="categoria-card" onclick="mostrarProductos('verduras')" data-categoria="verduras">
+                <img src="img/verduras.webp" alt="Verduras frescas" class="categoria-img">
+                <h2>Verduras</h2>
+                <div class="productos" id="verduras">
+                    <div class="producto" data-productor="Huerta La Frescura">Lechuga</div>
+                    <div class="producto" data-productor="Huerto Orgánico Pacha">Tomates</div>
+                    <div class="producto" data-productor="Cultivos Andinos">Zanahorias</div>
+                    <div class="producto" data-productor="Agropecuaria El Valle">Cebollas</div>
+                    <div class="producto" data-productor="Invernaderos La Rivera">Pimientos</div>
+                </div>
+            </div>
+            
+            <!-- Categoría Otros Productos -->
+            <div class="categoria-card" onclick="mostrarProductos('otros')" data-categoria="lacteos">
+                <img src="img/otrosproductos.webp" alt="Productos lácteos" class="categoria-img">
+                <h2>Lácteos</h2>
+                <div class="productos" id="otros">
+                    <div class="producto" data-productor="Avícola San Isidro">Huevos</div>
+                    <div class="producto" data-productor="Lácteos La Vaca Feliz">Leche</div>
+                    <div class="producto" data-productor="Lácteos La Vaca Feliz">Yogur</div>
+                    <div class="producto" data-productor="Quesería Artesanal">Queso</div>
+                    <div class="producto" data-productor="Lácteos Premium">Mantequilla</div>
+                </div>
+            </div>
+            
+            <div class="categoria-card" onclick="mostrarProductos('carnes')" data-categoria="carnes">
+                <img src="img/carnes.jpg" alt="Carnes" class="categoria-img">
+                <h2>Carnes</h2>
+                <div class="productos" id="carnes">
+                    <div class="producto" data-productor="Carnicería Don Raúl">Res</div>
+                    <div class="producto" data-productor="Avícola San Fernando">Pollo</div>
+                    <div class="producto" data-productor="Granja Porcina Los Pinos">Cerdo</div>
+                    <div class="producto" data-productor="Pesquera Costa Azul">Pescado</div>
+                    <div class="producto" data-productor="Estancia Patagónica">Cordero</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function mostrarProductos(categoria) {
+            // Obtener todos los elementos de productos
+            const todosProductos = document.querySelectorAll('.productos');
+            
+            // Ocultar todos los productos primero
+            todosProductos.forEach(prod => {
+                prod.style.display = 'none';
+            });
+            
+            // Mostrar solo los productos de la categoría seleccionada
+            const productos = document.getElementById(categoria);
+            if (productos.style.display === 'block') {
+                productos.style.display = 'none';
+            } else {
+                productos.style.display = 'block';
+            }
+        }
+    </script>
+
+<script>
+    function filtrarProductos() {
+    const texto = document.getElementById("input-busqueda").value.toLowerCase();
+    const categoriaSeleccionada = document.getElementById("filtro-categoria").value;
+
+    document.querySelectorAll('.categoria-card').forEach(card => {
+        const categoria = card.getAttribute('data-categoria');
+        let productosVisibles = 0;
+
+        // Filtro por categoría (si está seleccionada)
+        if (categoriaSeleccionada && categoria !== categoriaSeleccionada) {
+            card.style.display = 'none';
+            return;
+        }
+
+        // Busca en productos y productores
+        card.querySelectorAll('.producto').forEach(producto => {
+            const nombreProducto = producto.textContent.toLowerCase();
+            const nombreProductor = productosDB[producto.textContent]?.productor.toLowerCase() || '';
+            
+            // Coincide con producto O productor?
+            if (nombreProducto.includes(texto) || nombreProductor.includes(texto)) {
+                producto.style.display = 'block';
+                productosVisibles++;
+            } else {
+                producto.style.display = 'none';
+            }
+        });
+
+        card.style.display = productosVisibles > 0 ? 'block' : 'none';
+    });
+}
+</script>
+
+<!-- Modal (oculto por defecto) -->
+<div id="modal-producto" class="modal">
+    <div class="modal-contenido">
+        <span class="cerrar-modal">&times;</span>
+        <img id="modal-imagen" src="" alt="Imagen del producto">
+        <h2 id="modal-nombre"></h2>
+        <p id="modal-productor" class="productor"></p>
+        <div id="modal-calificacion" class="calificacion"></div>
+        <p id="modal-precio" class="precio"></p>
+        <p id="modal-descripcion"></p>
+    </div>
+</div>
+
+<!-- Sección Ofertas Especiales -->
+<div class="ofertas-especiales">
+    <h2>🌟 Ofertas Especiales</h2>
+    <div class="contenedor-ofertas">
+        <!-- Oferta 1 -->
+        <div class="oferta-card">
+            <img src="img/manzanas.webp" alt="Oferta de Manzanas">
+            <div class="oferta-info">
+                <h3>Manzanas Premium</h3>
+                <p class="precio-original">$1500/kg</p>
+                <p class="precio-oferta">$1200/kg</p>
+                <p class="ahorro">¡Ahorras 20%!</p>
+                <button class="btn-comprar">Comprar ahora</button>
+            </div>
+        </div>
+        
+        <!-- Oferta 2 -->
+        <div class="oferta-card">
+            <img src="img/asado.jpg" alt="Oferta de Pollo">
+            <div class="oferta-info">
+                <h3>Pollo Entero</h3>
+                <p class="precio-original">$3990/kg</p>
+                <p class="precio-oferta">$2990/kg</p>
+                <p class="ahorro">¡Oferta por tiempo limitado!</p>
+                <button class="btn-comprar">Comprar ahora</button>
+            </div>
+        </div>
+        
+        <!-- Oferta 3 -->
+        <div class="oferta-card">
+            <img src="img/queso.png" alt="Oferta de Queso">
+            <div class="oferta-info">
+                <h3>Queso Campesino</h3>
+                <p class="precio-original">$4500/kg</p>
+                <p class="precio-oferta">$3800/kg</p>
+                <p class="ahorro">2kg al precio de 1.5</p>
+                <button class="btn-comprar">Comprar ahora</button>
+            </div>
+        </div>
+
+        <div class="formulario-oferta">
+            <div class="oferta-card formulario">
+                <h3>Crear Nueva Oferta</h3>
+                <form class="formulario-horizontal">
+                    <div class="grupo-campos">
+                        <div class="campo-formulario">
+                            <label for="categoria-oferta">Categoría:</label>
+                            <select id="categoria-oferta">
+                                <option>Frutas</option>
+                                <option>Verduras</option>
+                                <option>Lácteos</option>
+                                <option>Carnes</option>
+                            </select>
+                        </div>
+                        
+                        <div class="campo-formulario">
+                            <label for="producto-oferta">Producto:</label>
+                            <input type="text" id="producto-oferta" placeholder="Nombre del producto">
+                        </div>
+                        
+                        <div class="campo-formulario">
+                            <label for="productor-oferta">Productor:</label>
+                            <input type="text" id="productor-oferta" placeholder="Nombre del productor">
+                        </div>
+                    </div>
+                    
+                    <div class="grupo-campos">
+                        <div class="campo-formulario">
+                            <label for="precio-original">Precio original:</label>
+                            <input type="text" id="precio-original" placeholder="$0000">
+                        </div>
+                        
+                        <div class="campo-formulario">
+                            <label for="precio-oferta">Precio oferta:</label>
+                            <input type="text" id="precio-oferta" placeholder="$0000">
+                        </div>
+                        
+                        <div class="campo-formulario">
+                            <label for="descripcion-oferta">Descripción:</label>
+                            <textarea id="descripcion-oferta" placeholder="Breve descripción de la oferta"></textarea>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn-lanzar">Lanzar Oferta</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer class="footer-agropecuaria">
+    <div class="footer-contenido">
+        <div class="footer-info">
+            <span><i class="icono">📞</i> (123) 456-7890</span>
+            <span><i class="icono">✉️</i> contacto@inkaagro.com</span>
+            <span><i class="icono">👨‍💼</i> Vendedor: Juan Pérez</span>
+        </div>
+        <div class="footer-derechos">
+            <p>© 2025 INKA Agropecuaria</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Datos de los productos (simulamos una "mini-base de datos")
+    const productosDB = {
+    "Manzanas": {
+        imagen: "img/manzanas.webp",
+        precio: "$1500/kg",
+        descripcion: "Manzanas rojas cultivadas localmente, jugosas y dulces.",
+        productor: "Granja Don José",
+        calificacion: 4.5
+    },
+    "Lechuga": {
+        imagen: "img/lechuga.avif",
+        precio: "$800/unidad",
+        descripcion: "Lechuga fresca y crujiente, ideal para ensaladas.",
+        productor: "Huerta La Frescura",
+        calificacion: 4.2
+    },
+    "Plátanos": {
+        imagen: "img/platanos.jpeg",
+        precio: "$800/kg",
+        descripcion: "Plátanos maduros y dulces, ricos en potasio.",
+        productor: "Finca El Trópico",
+        calificacion: 4.7
+    },
+    "Naranjas": {
+        imagen: "img/naranja.jpg",
+        precio: "$1200/kg",
+        descripcion: "Naranjas valencianas, jugosas y ricas en vitamina C.",
+        productor: "Citrícola Valparaíso",
+        calificacion: 4.8
+    },
+    "Fresas": {
+        imagen: "img/fresas.webp",
+        precio: "$2500/kg",
+        descripcion: "Fresas frescas y dulces, perfectas para postres.",
+        productor: "Berry Farms",
+        calificacion: 4.9
+    },
+    "Uvas": {
+        imagen: "img/uvas.jpg",
+        precio: "$2000/kg",
+        descripcion: "Uvas rojas sin semillas, ideales para snacks saludables.",
+        productor: "Viñedos Santa Elena",
+        calificacion: 4.6
+    },
+    "Tomates": {
+        imagen: "img/tomates.jpg",
+        precio: "$1000/kg",
+        descripcion: "Tomates maduros, perfectos para ensaladas y salsas.",
+        productor: "Huerto Orgánico Pacha",
+        calificacion: 4.3
+    },
+    "Zanahorias": {
+        imagen: "img/zanahoria.jpg",
+        precio: "$0900/kg",
+        descripcion: "Zanahorias frescas y crujientes, ricas en betacaroteno.",
+        productor: "Cultivos Andinos",
+        calificacion: 4.4
+    },
+    "Cebollas": {
+        imagen: "img/cebolla.jpg",
+        precio: "$700/kg",
+        descripcion: "Cebollas amarillas, ideales para cocinar.",
+        productor: "Agropecuaria El Valle",
+        calificacion: 4.1
+    },
+    "Pimientos": {
+        imagen: "img/pimientos.jpg",
+        precio: "$1300/kg",
+        descripcion: "Pimientos rojos y verdes, dulces y versátiles.",
+        productor: "Invernaderos La Rivera",
+        calificacion: 4.0
+    },
+    "Huevos": {
+        imagen: "img/huevos.avif",
+        precio: "$3000/docena",
+        descripcion: "Huevos frescos de gallinas criadas en libertad.",
+        productor: "Avícola San Isidro",
+        calificacion: 4.7
+    },
+    "Leche": {
+        imagen: "img/leche.avif",
+        precio: "$1200litro",
+        descripcion: "Leche entera pasteurizada, rica en calcio.",
+        productor: "Lácteos La Vaca Feliz",
+        calificacion: 4.5
+    },
+    "Yogur": {
+        imagen: "img/yogur.avif",
+        precio: "$800/unidad",
+        descripcion: "Yogur natural cremoso, sin conservantes.",
+        productor: "Lácteos La Vaca Feliz",
+        calificacion: 4.6
+    },
+    "Queso": {
+        imagen: "img/queso.png",
+        precio: "$4500/kg",
+        descripcion: "Queso fresco tipo campesino, bajo en sal.",
+        productor: "Quesería Artesanal",
+        calificacion: 4.8
+    },
+    "Mantequilla": {
+        imagen: "img/mantequilla.jpg",
+        precio: "$2800/250g",
+        descripcion: "Mantequilla sin sal, hecha con crema natural.",
+        productor: "Lácteos Premium",
+        calificacion: 4.4
+    },
+    "Res": {
+        imagen: "img/res.jpg",
+        precio: "$6500/kg",
+        descripcion: "Carne de res magra, cortes seleccionados.",
+        productor: "Carnicería Don Raúl",
+        calificacion: 4.9
+    },
+    "Pollo": {
+        imagen: "img/asado.jpg",
+        precio: "$3990/kg",
+        descripcion: "Pollo fresco de granja, sin hormonas.",
+        productor: "Avícola San Fernando",
+        calificacion: 4.7
+    },
+    "Cerdo": {
+        imagen: "img/cerdo.jpg",
+        precio: "$5000/kg",
+        descripcion: "Carne de cerdo, cortes premium.",
+        productor: "Granja Porcina Los Pinos",
+        calificacion: 4.5
+    },
+    "Pescado": {
+        imagen: "img/pescado.jpg",
+        precio: "$7500/kg",
+        descripcion: "Filetes de pescado blanco, frescos del día.",
+        productor: "Pesquera Costa Azul",
+        calificacion: 4.8
+    },
+    "Cordero": {
+        imagen: "img/cordero.jpg",
+        precio: "$8000/kg",
+        descripcion: "Carne de cordero, tierna y jugosa.",
+        productor: "Estancia Patagónica",
+        calificacion: 4.9
+    }
+};
+
+    // Abrir modal al hacer clic en un producto
+    document.querySelectorAll('.producto').forEach(producto => {
+        producto.addEventListener('click', () => {
+            const nombreProducto = producto.textContent;
+            const datos = productosDB[nombreProducto];
+            
+            if (datos) {
+                document.getElementById('modal-imagen').src = datos.imagen;
+                document.getElementById('modal-nombre').textContent = nombreProducto;
+                document.getElementById('modal-productor').textContent = `Productor: ${datos.productor}`;
+                document.getElementById('modal-calificacion').textContent = '★'.repeat(Math.round(datos.calificacion)) + '☆'.repeat(5 - Math.round(datos.calificacion)) + ` (${datos.calificacion})`;
+                document.getElementById('modal-precio').textContent = datos.precio;
+                document.getElementById('modal-descripcion').textContent = datos.descripcion;
+                document.getElementById('modal-producto').style.display = 'flex';
+            }
+        });
+    });
+
+    // Cerrar modal
+    document.querySelector('.cerrar-modal').addEventListener('click', () => {
+        document.getElementById('modal-producto').style.display = 'none';
+    });
+
+    // Cerrar al hacer clic fuera del modal
+    window.addEventListener('click', (event) => {
+        if (event.target === document.getElementById('modal-producto')) {
+            document.getElementById('modal-producto').style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>
